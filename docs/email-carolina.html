@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="utf-8"></head>
+<body style="font-family: Arial, sans-serif; font-size: 14px; color: #222; line-height: 1.6; max-width: 780px; margin: 0 auto; padding: 20px;">
+
+<p><strong>Para:</strong> Carolina<br>
+<strong>De:</strong> Feli (Tech Lead)<br>
+<strong>Fecha:</strong> 16/02/2026<br>
+<strong>Asunto:</strong> Definiciones para arrancar el desarrollo + propuesta de módulo nuevo</p>
+
+<hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+
+<p>Caro, analicé todo lo que me mandaste: el mail, la conversación con GPT y la planilla Excel de liquidación. El Excel me sirvió mucho porque tiene la lógica real de cómo se liquida hoy (porcentajes, cuotas, producción, comisiones, pagos parciales, etc.).</p>
+
+<p>Ya armé la documentación técnica del proyecto. Antes de arrancar a programar necesito que me confirmes algunas cosas. Las ordeno por urgencia:</p>
+
+<hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+
+<!-- ═══════════════════════════ BLOQUEANTES ═══════════════════════════ -->
+
+<h2 style="color: #c0392b; font-size: 16px; margin-top: 28px;">🔴 PREGUNTAS BLOQUEANTES <span style="font-weight: normal; font-size: 13px;">(las necesito sí o sí para empezar)</span></h2>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">1. El "Porcentaje" del acuerdo</h3>
+<p style="margin-top: 0;">En la planilla cada empleado tiene un Porcentaje (0.5, 0.9, 1.0, 1.2, 2.0, etc.) que multiplica el sueldo básico del mes.<br>
+<strong>Pregunta:</strong> ¿Este es el mecanismo para manejar la diferencia entre lo que se declara y lo que realmente se paga? Es decir, ¿el básico de "Tabla Sueldos" es el valor de referencia y el Porcentaje define lo que realmente cobra cada uno?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">2. ¿Cuántos empleadores son?</h3>
+<p style="margin-top: 0;">En la planilla encontré: NOR-PAN SA, ISABEL MARTINELLI, LUCILA CASTRILLO, DOÑA CAROLINA SAS, CAROLINA ZICOVICH, "SIN EMPLEADOR", MONOTRIBUTO y PPP.<br>
+<strong>Pregunta:</strong> ¿Son todos? ¿Pueden aparecer más? ¿"SIN EMPLEADOR" es una categoría informal? Necesito saber esto para configurar bien el sistema multiempresa.</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">3. Composición del sueldo</h3>
+<p style="margin-top: 0;">Veo que hay 3 formas de armar el sueldo: por básico, por producción, o por comisión.<br>
+<strong>Pregunta:</strong> ¿Es correcto? ¿El sistema debe saber de entrada cuál aplica a cada empleado, o es algo que se define mes a mes?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">4. Pagos parciales</h3>
+<p style="margin-top: 0;">La planilla muestra hasta 4 pagos por período (efectivo, transferencia, MercadoPago, etc.) con fechas distintas.<br>
+<strong>Pregunta:</strong> ¿El sistema tiene que registrar cada pago parcial (monto + fecha + medio de pago) hasta completar el saldo? ¿O solo importa el total?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">5. ¿Cómo se liquida hoy?</h3>
+<p style="margin-top: 0;">Veo que hoy la liquidación se resuelve con la planilla Excel.<br>
+<strong>Pregunta:</strong> Además del Excel, ¿usan alguna otra plantilla, programa o sistema para liquidar? ¿Lo hace alguien internamente o lo tercerizan al estudio contable? Necesito entender bien el flujo actual para que el sistema nuevo lo reemplace correctamente y no nos falte nada.</p>
+
+<hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+
+<!-- ═══════════════════════════ IMPORTANTES ═══════════════════════════ -->
+
+<h2 style="color: #e67e22; font-size: 16px; margin-top: 28px;">🟡 PREGUNTAS IMPORTANTES <span style="font-weight: normal; font-size: 13px;">(las necesito antes de llegar al módulo de liquidación)</span></h2>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">6. Descuentos legales</h3>
+<p style="margin-top: 0;">En la planilla no aparecen aportes patronales (jubilación, obra social, ley 19032, sindicato).<br>
+<strong>Pregunta:</strong> ¿Se calculan por separado? ¿Ya están incluidos en el "acordado"? ¿No se muestran intencionalmente?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">7. Recibos de sueldo</h3>
+<p style="margin-top: 0;"><strong>Pregunta:</strong> ¿El sistema tiene que generar recibos PDF descargables? ¿Se necesitan dos versiones (una "declarada" y una "real")? ¿O solo es un detalle interno tipo Excel?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">8. Empleados PPP (Programa Primer Paso)</h3>
+<p style="margin-top: 0;">Veo varios en la planilla.<br>
+<strong>Pregunta:</strong> ¿Tienen reglas especiales? ¿Subsidio del gobierno? ¿Se liquidan distinto?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">9. Formato para el estudio contable</h3>
+<p style="margin-top: 0;"><strong>Pregunta:</strong> ¿El estudio contable tiene un formato específico de archivo que necesiten recibir? Si tienen un ejemplo, me sirve.</p>
+
+<hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+
+<!-- ═══════════════════════════ PUEDEN ESPERAR ═══════════════════════════ -->
+
+<h2 style="color: #27ae60; font-size: 16px; margin-top: 28px;">🟢 PUEDEN ESPERAR <span style="font-weight: normal; font-size: 13px;">(las definimos mientras avanzamos)</span></h2>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">10. Notificaciones</h3>
+<p style="margin-top: 0;">¿Querés que el sistema avise por email o dentro de la app cuando pasa algo? (ej: se carga una sanción, vencen vacaciones, vence un préstamo)</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">11. Convenio colectivo</h3>
+<p style="margin-top: 0;">Algunos empleados tienen "COMERCIO" como convenio. ¿Se aplican escalas salariales obligatorias del CCT?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">12. Acceso de empleados</h3>
+<p style="margin-top: 0;">¿A futuro los empleados podrían tener su propio login para ver sus recibos/datos?</p>
+
+<h3 style="font-size: 14px; margin-bottom: 4px;">13. Cambio de obra social</h3>
+<p style="margin-top: 0;">Mencionaste "cambio de obra social" como un movimiento registrable. ¿Solo se registra como dato o tiene algún impacto en la liquidación?</p>
+
+<hr style="border: none; border-top: 2px solid #333; margin: 30px 0;">
+
+<!-- ═══════════════════════════ PROPUESTA M14 ═══════════════════════════ -->
+
+<h2 style="color: #2c3e50; font-size: 16px;">💡 PROPUESTA EXTRA: Módulo de Recursos y Accesos del Empleado</h2>
+
+<p>Además de todo lo que hablamos, te propongo agregar un módulo para <strong>centralizar qué herramientas y accesos tiene cada empleado</strong>. La idea:</p>
+
+<p><strong>¿Qué resuelve?</strong></p>
+<ul style="margin-top: 4px;">
+  <li>Saber de un vistazo qué tiene asignado cada persona: mail de la empresa, acceso a apps, llaves, herramientas, uniformes, vehículos, etc.</li>
+  <li>Cuando alguien se va → checklist automático de todo lo que hay que dar de baja o recuperar</li>
+  <li>Cuando entra alguien nuevo → checklist de todo lo que hay que darle de alta</li>
+</ul>
+
+<p><strong>Ejemplo de cómo se vería:</strong></p>
+
+<table style="border-collapse: collapse; width: 100%; font-size: 13px; margin: 10px 0;">
+  <thead>
+    <tr style="background-color: #f4f4f4;">
+      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: left;">Empleado</th>
+      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: left;">Recurso</th>
+      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: left;">Tipo</th>
+      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;">Estado</th>
+      <th style="border: 1px solid #ccc; padding: 6px 10px; text-align: left;">Fecha alta</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">López, Santiago</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">email slopez@norpan.com</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Cuenta digital</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;"><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Activo</span></td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">01/03/2022</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">López, Santiago</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Acceso sist. facturación</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">App / Sistema</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;"><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Activo</span></td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">15/03/2022</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">López, Santiago</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Celular Samsung A54</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Equipo físico</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;"><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Activo</span></td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">01/06/2023</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">López, Santiago</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Llave depósito JM</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Llave / Acceso</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;"><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Activo</span></td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">01/03/2022</td>
+    </tr>
+    <tr>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Robles, Hector</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">email hrobles@norpan.com</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">Cuenta digital</td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px; text-align: center;"><span style="background: #c0392b; color: white; padding: 2px 8px; border-radius: 10px; font-size: 12px;">Baja</span></td>
+      <td style="border: 1px solid #ccc; padding: 6px 10px;">01/02/2024</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>No afecta en nada</strong> al módulo de sueldos ni al resto — es independiente, pero está vinculado al legajo del empleado. Es algo simple de desarrollar y muy útil para el día a día.</p>
+
+<p>¿Te parece? Si te gusta lo incluyo en el plan.</p>
+
+<hr style="border: none; border-top: 1px solid #ccc; margin: 20px 0;">
+
+<p>Con las respuestas a las primeras 5 preguntas (las rojas) ya puedo arrancar a codear. Las demás las vamos viendo mientras avanzo.</p>
+
+<p>Cualquier duda me avisás.</p>
+
+<p>Saludos,<br>Feli</p>
+
+</body>
+</html>
